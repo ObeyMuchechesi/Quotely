@@ -16,7 +16,7 @@ function money(value: number, currency: string) {
 
 export async function sendQuoteEmail(values: {
   apiKey: string;
-  from: string;
+  fromEmail: string;
   contractorName: string;
   contractorEmail: string;
   customerName: string;
@@ -54,27 +54,25 @@ export async function sendQuoteEmail(values: {
       <p style="font-size:11px;color:#888;text-align:center;">Sent via <strong>Quotely</strong> — speak the job. Send the quote.</p>
     </div>`;
 
-  const response = await fetch('https://api.sendgrid.com/v3/mail/send', {
+  const response = await fetch('https://api.resend.com/emails', {
     method: 'POST',
     headers: {
       Authorization: `Bearer ${values.apiKey}`,
       'Content-Type': 'application/json',
     },
     body: JSON.stringify({
-      personalizations: [{ to: [{ email: values.customerEmail }] }],
-      from: { email: values.from },
-      reply_to: { email: values.contractorEmail, name: values.contractorName },
+      from: `${values.contractorName} <${values.fromEmail}>`,
+      to: [values.customerEmail],
+      reply_to: values.contractorEmail,
       subject: `Quote #${values.quoteId} from ${values.contractorName}`,
-      content: [{ type: 'text/html', value: html }],
+      html,
       attachments: [{
         content: values.pdf.toString('base64'),
         filename: `quote-${values.quoteId}.pdf`,
-        type: 'application/pdf',
-        disposition: 'attachment',
       }],
     }),
   });
   if (!response.ok) {
-    throw new Error(`SendGrid rejected the quote email (HTTP ${response.status}).`);
+    throw new Error(`Resend rejected the quote email (HTTP ${response.status}).`);
   }
 }

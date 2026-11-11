@@ -158,8 +158,8 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
     const pdf = await generateQuotePdf(quote, quoteId, contractorName);
 
     await sendQuoteEmail({
-      apiKey: env.SENDGRID_API_KEY,
-      from: env.SENDGRID_FROM_EMAIL,
+      apiKey: env.RESEND_API_KEY,
+      fromEmail: env.RESEND_FROM_EMAIL,
       contractorName,
       contractorEmail: fields.data.contractorEmail,
       customerName: fields.data.customerName,

@@ -9,12 +9,12 @@ Record a job on your phone. Quotely transcribes it, turns it into a structured q
 - Node.js 20+
 - MongoDB connection string
 - OpenAI API key
-- SendGrid API key and a verified sender address
+- Resend API key and a verified sender address
 - Vercel CLI for local development and deployment
 
 ## Configure
 
-Copy `.env.example` to `.env` and set `MONGODB_URI`, `OPENAI_API_KEY`, `SENDGRID_API_KEY`, and `SENDGRID_FROM_EMAIL`. The sender email must be verified by SendGrid. Each quote form lets the contractor edit their business name and enter a reply-to email so customer responses go directly to them. `CONTRACTOR_NAME` is the fallback business name.
+Copy `.env.example` to `.env` and set `MONGODB_URI`, `OPENAI_API_KEY`, `RESEND_API_KEY`, and `RESEND_FROM_EMAIL`. Resend offers a free tier (up to 3,000 emails/month, limited to 100/day); add and verify a sender domain in Resend before sending customer emails. Each quote form lets the contractor edit their business name and enter a reply-to email so customer responses go directly to them. `CONTRACTOR_NAME` is the fallback business name.
 
 Never commit `.env` or paste secret values into source files.
 
@@ -29,7 +29,7 @@ npm run dev
 
 ## Deploy to Vercel
 
-Import the GitHub repository into Vercel or run `vercel link`, then add the required environment variables in the Vercel project settings for Production and Preview. Configure your SendGrid-verified sending address as `SENDGRID_FROM_EMAIL`; contractors enter their own reply-to email when creating each quote. `CONTRACTOR_NAME` is an optional fallback; the business name is editable on the quote form. Deploy with:
+Import the GitHub repository into Vercel or run `vercel link`, then add the required environment variables in the Vercel project settings for Production and Preview. Configure a Resend API key and a Resend-verified `RESEND_FROM_EMAIL`; contractors enter their own reply-to email when creating each quote. `CONTRACTOR_NAME` is an optional fallback; the business name is editable on the quote form. Deploy with:
 
 ```sh
 vercel --prod
