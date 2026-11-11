@@ -30,6 +30,8 @@ export default function App() {
   const [audio, setAudio] = useState<Blob | null>(null);
   const [recording, setRecording] = useState(false);
   const [seconds, setSeconds] = useState(0);
+  const [contractorName, setContractorName] = useState('Your Contractor');
+  const [contractorEmail, setContractorEmail] = useState('');
   const [customerName, setCustomerName] = useState('');
   const [customerEmail, setCustomerEmail] = useState('');
   const [currency, setCurrency] = useState('USD');
@@ -136,6 +138,8 @@ export default function App() {
 
     const formData = new FormData();
     formData.append('audio', audio, 'job-recording.webm');
+    formData.append('contractorName', contractorName.trim());
+    formData.append('contractorEmail', contractorEmail.trim());
     formData.append('customerName', customerName.trim());
     formData.append('customerEmail', customerEmail.trim());
     formData.append('currency', currency);
@@ -223,6 +227,35 @@ export default function App() {
             {audio && <button className="clear-audio" type="button" onClick={() => setAudio(null)}>Remove audio</button>}
           </div>
 
+          <div className="form-divider"><span>WHO’S SENDING THE QUOTE?</span></div>
+          <div className="field-grid">
+            <label className="field">
+              <span>Business name</span>
+              <input
+                autoComplete="organization"
+                maxLength={120}
+                placeholder="Your Contractor"
+                value={contractorName}
+                onChange={(event) => setContractorName(event.target.value)}
+                required
+                disabled={loading}
+              />
+            </label>
+            <label className="field">
+              <span>Your email <span className="field-hint">customer replies go here</span></span>
+              <input
+                type="email"
+                autoComplete="email"
+                maxLength={254}
+                placeholder="you@yourbusiness.com"
+                value={contractorEmail}
+                onChange={(event) => setContractorEmail(event.target.value)}
+                required
+                disabled={loading}
+              />
+            </label>
+          </div>
+
           <div className="form-divider"><span>WHO’S IT FOR?</span></div>
           <div className="field-grid">
             <label className="field">
@@ -285,7 +318,7 @@ export default function App() {
 
           <div className="submit-row">
             <p>AI-generated pricing is an estimate.<br />Review the quote before accepting it.</p>
-            <button className="submit-button" type="submit" disabled={!audio || !customerName.trim() || !customerEmail.trim() || loading || recording}>
+            <button className="submit-button" type="submit" disabled={!audio || !contractorName.trim() || !contractorEmail.trim() || !customerName.trim() || !customerEmail.trim() || loading || recording}>
               {loading ? (
                 <><span className="spinner" /> Quotely is generating…</>
               ) : (

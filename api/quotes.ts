@@ -16,6 +16,8 @@ export const config = {
 const formSchema = z.object({
   customerName: z.string().trim().min(1).max(120),
   customerEmail: z.string().trim().email().max(254),
+  contractorName: z.string().trim().max(120).default(''),
+  contractorEmail: z.string().trim().email().max(254),
   currency: z.enum(['USD', 'CAD', 'GBP', 'EUR', 'AUD', 'ZAR']),
   taxRate: z.coerce.number().min(0).max(25),
 });
@@ -44,7 +46,7 @@ function parseForm(req: VercelRequest): Promise<ParsedForm> {
     try {
       parser = Busboy({
         headers: req.headers,
-        limits: { fileSize: MAX_AUDIO_BYTES, files: 1, fields: 5, parts: 6 },
+        limits: { fileSize: MAX_AUDIO_BYTES, files: 1, fields: 8, parts: 9 },
       });
     } catch {
       reject(new Error('Send the quote details as a multipart form with an audio file.'));
@@ -129,11 +131,12 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
     const form = await parseForm(req);
     const fields = formSchema.safeParse(form.fields);
     if (!fields.success) {
-      return res.status(400).json({ error: 'Enter a customer name, valid email, currency, and tax rate from 0 to 25%.' });
+      return res.status(400).json({ error: 'Enter valid contractor and customer contact details, currency, and tax rate from 0 to 25%.' });
     }
     if (!form.audio) return res.status(400).json({ error: 'Record or upload an audio clip to continue.' });
 
     const env = getEnv();
+    const contractorName = fields.data.contractorName || env.CONTRACTOR_NAME;
     await connectToDatabase(env.MONGODB_URI);
     const transcript = await transcribeAudio(
       env.OPENAI_API_KEY,
@@ -146,16 +149,19 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
     const created = await saveQuote({
       customerName: fields.data.customerName,
       customerEmail: fields.data.customerEmail,
+      contractorName,
+      contractorEmail: fields.data.contractorEmail,
       quote,
     });
     savedQuote = created;
     const quoteId = String(created._id);
-    const pdf = await generateQuotePdf(quote, quoteId, env.CONTRACTOR_NAME);
+    const pdf = await generateQuotePdf(quote, quoteId, contractorName);
 
     await sendQuoteEmail({
       apiKey: env.SENDGRID_API_KEY,
       from: env.SENDGRID_FROM_EMAIL,
-      contractorName: env.CONTRACTOR_NAME,
+      contractorName,
+      contractorEmail: fields.data.contractorEmail,
       customerName: fields.data.customerName,
       customerEmail: fields.data.customerEmail,
       quote,

@@ -18,6 +18,7 @@ export async function sendQuoteEmail(values: {
   apiKey: string;
   from: string;
   contractorName: string;
+  contractorEmail: string;
   customerName: string;
   customerEmail: string;
   quote: Quote;
@@ -62,6 +63,7 @@ export async function sendQuoteEmail(values: {
     body: JSON.stringify({
       personalizations: [{ to: [{ email: values.customerEmail }] }],
       from: { email: values.from },
+      reply_to: { email: values.contractorEmail, name: values.contractorName },
       subject: `Quote #${values.quoteId} from ${values.contractorName}`,
       content: [{ type: 'text/html', value: html }],
       attachments: [{

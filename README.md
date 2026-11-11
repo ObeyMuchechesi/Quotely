@@ -14,7 +14,7 @@ Record a job on your phone. Quotely transcribes it, turns it into a structured q
 
 ## Configure
 
-Copy `.env.example` to `.env` and set `MONGODB_URI`, `OPENAI_API_KEY`, `SENDGRID_API_KEY`, and `SENDGRID_FROM_EMAIL`. Set `CONTRACTOR_NAME` to the business name shown on customer emails and PDFs.
+Copy `.env.example` to `.env` and set `MONGODB_URI`, `OPENAI_API_KEY`, `SENDGRID_API_KEY`, and `SENDGRID_FROM_EMAIL`. The sender email must be verified by SendGrid. Each quote form lets the contractor edit their business name and enter a reply-to email so customer responses go directly to them. `CONTRACTOR_NAME` is the fallback business name.
 
 Never commit `.env` or paste secret values into source files.
 
@@ -29,7 +29,7 @@ npm run dev
 
 ## Deploy to Vercel
 
-Import the GitHub repository into Vercel or run `vercel link`, then add the required environment variables in the Vercel project settings for Production and Preview. Set `CONTRACTOR_NAME` as desired and deploy with:
+Import the GitHub repository into Vercel or run `vercel link`, then add the required environment variables in the Vercel project settings for Production and Preview. Configure your SendGrid-verified sending address as `SENDGRID_FROM_EMAIL`; contractors enter their own reply-to email when creating each quote. `CONTRACTOR_NAME` is an optional fallback; the business name is editable on the quote form. Deploy with:
 
 ```sh
 vercel --prod

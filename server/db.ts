@@ -4,6 +4,8 @@ import type { Quote, QuoteLineItem } from './types.js';
 type QuoteRecordFields = Quote & {
   customerName: string;
   customerEmail: string;
+  contractorName: string;
+  contractorEmail: string;
   status: 'sending' | 'sent' | 'failed';
   lineItems: QuoteLineItem[];
 };
@@ -12,6 +14,8 @@ const quoteSchema = new mongoose.Schema(
   {
     customerName: { type: String, required: true, maxlength: 120 },
     customerEmail: { type: String, required: true, maxlength: 254 },
+    contractorName: { type: String, required: true, maxlength: 120 },
+    contractorEmail: { type: String, required: true, maxlength: 254 },
     jobDescription: { type: String, required: true, maxlength: 4000 },
     currency: { type: String, required: true, length: 3 },
     lineItems: {
@@ -52,12 +56,16 @@ export async function connectToDatabase(uri: string) {
 export function saveQuote(values: {
   customerName: string;
   customerEmail: string;
+  contractorName: string;
+  contractorEmail: string;
   quote: Quote;
 }) {
   return QuoteRecord.create({
     ...values.quote,
     customerName: values.customerName,
     customerEmail: values.customerEmail,
+    contractorName: values.contractorName,
+    contractorEmail: values.contractorEmail,
     status: 'sending',
   });
 }
