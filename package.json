@@ -1,0 +1,32 @@
+{
+  "name": "quotely",
+  "version": "1.0.0",
+  "private": true,
+  "workspaces": [
+    "client"
+  ],
+  "scripts": {
+    "build": "npm run build --workspace client && npm run typecheck:api",
+    "dev": "vercel dev",
+    "test": "tsx --test server/quote.test.ts",
+    "typecheck:api": "tsc --noEmit -p tsconfig.api.json"
+  },
+  "dependencies": {
+    "busboy": "^1.6.0",
+    "mongoose": "^8.5.0",
+    "openai": "^7.55.0",
+    "pdfkit": "^0.20.2",
+    "zod": "^4.6.7"
+  },
+  "devDependencies": {
+    "@rollup/wasm-node": "^4.68.2",
+    "@types/busboy": "^1.5.4",
+    "@types/node": "^20.14.9",
+    "@types/pdfkit": "^0.13.5",
+    "tsx": "^4.16.2",
+    "typescript": "^5.5.3"
+  },
+  "overrides": {
+    "rollup": "npm:@rollup/wasm-node@^4.68.2"
+  }
+}
