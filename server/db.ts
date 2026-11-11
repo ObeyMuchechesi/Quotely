@@ -1,5 +1,12 @@
 import mongoose from 'mongoose';
-import type { Quote } from './types.js';
+import type { Quote, QuoteLineItem } from './types.js';
+
+type QuoteRecordFields = Quote & {
+  customerName: string;
+  customerEmail: string;
+  status: 'sending' | 'sent' | 'failed';
+  lineItems: QuoteLineItem[];
+};
 
 const quoteSchema = new mongoose.Schema(
   {
@@ -25,7 +32,9 @@ const quoteSchema = new mongoose.Schema(
   { timestamps: true },
 );
 
-const QuoteRecord = mongoose.models.Quote || mongoose.model('Quote', quoteSchema);
+const QuoteRecord: mongoose.Model<QuoteRecordFields> = mongoose.models.Quote
+  ? mongoose.models.Quote as mongoose.Model<QuoteRecordFields>
+  : mongoose.model<QuoteRecordFields>('Quote', quoteSchema);
 
 let connection: Promise<typeof mongoose> | null = null;
 
